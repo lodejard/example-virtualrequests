@@ -11,6 +11,7 @@ namespace example_virtualrequests
     public class FakeRequestMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly PathString _path = new PathString("/probe");
 
         public FakeRequestMiddleware(RequestDelegate next)
         {
@@ -19,7 +20,11 @@ namespace example_virtualrequests
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path.StartsWithSegments("/probe"))
+            // requests arriving at "/probe" 
+            // will get a response of {"/weatherforecast":200,"/bad-page":404}
+            // and a status code of 503
+
+            if (context.Request.Path == _path)
             {
                 var paths = new[]
                 {
